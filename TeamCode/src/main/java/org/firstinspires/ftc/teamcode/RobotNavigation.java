@@ -1,5 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-public class MecanumDrive {
+public class RobotNavigation {
 
 }
