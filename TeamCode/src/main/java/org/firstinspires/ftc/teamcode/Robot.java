@@ -4,6 +4,7 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot.LogoFacingDirection;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot.UsbFacingDirection;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -27,23 +28,25 @@ public class Robot {
         gamepad2 = Gamepad2;
     }
     public void init() {
-        backLeft = hardwareMap.get(DcMotor.class, "NAME");
-        backRight = hardwareMap.get(DcMotor.class, "NAME");
-        frontLeft = hardwareMap.get(DcMotor.class, "NAME");
-        frontRight = hardwareMap.get(DcMotor.class, "NAME");
-        slideExt = hardwareMap.get(DcMotor.class, "NAME");
-        slideRot = hardwareMap.get(DcMotor.class, "NAME");
-        imu = hardwareMap.get(IMU.class, "NAME");
+        backLeft = hardwareMap.get(DcMotor.class, "backLeft");
+        backRight = hardwareMap.get(DcMotor.class, "backRight");
+        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
+        frontRight = hardwareMap.get(DcMotor.class, "frontRight");
+        // slideExt = hardwareMap.get(DcMotor.class, "slideExt");
+        // slideRot = hardwareMap.get(DcMotor.class, "slideRot");
+        // imu = hardwareMap.get(IMU.class, "NAME");
 
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        //backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        //frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(LogoFacingDirection.LEFT, UsbFacingDirection.UP)));
+        //frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        // imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(LogoFacingDirection.LEFT, UsbFacingDirection.UP)));
     }
     public void processDriveInput() {
         // 2 3

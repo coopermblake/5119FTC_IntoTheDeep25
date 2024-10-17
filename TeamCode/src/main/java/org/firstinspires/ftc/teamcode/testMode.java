@@ -15,8 +15,9 @@ public class testMode extends LinearOpMode {
             telemetry.addData("backRight encoder value:", robot.backRight.getCurrentPosition());
             telemetry.addData("frontLeft encoder value:", robot.frontLeft.getCurrentPosition());
             telemetry.addData("frontRight encoder value:", robot.frontRight.getCurrentPosition());
-            telemetry.addData("slideExt encoder value:", robot.slideExt.getCurrentPosition());
-            telemetry.addData("slideRot encoder value:", robot.slideRot.getCurrentPosition());
+            telemetry.update();
+            //telemetry.addData("slideExt encoder value:", robot.slideExt.getCurrentPosition());
+            //telemetry.addData("slideRot encoder value:", robot.slideRot.getCurrentPosition());
 
             // Mappings for drivetrain:
             //  FRONT
@@ -46,7 +47,7 @@ public class testMode extends LinearOpMode {
             // Mappings for slide:
             // (left_bumper) OUT - IN (right_bumper)
             // dpad up/down = slide rotate up/down
-            if(gamepad1.left_bumper) {
+            /* if(gamepad1.left_bumper) {
                 robot.slideExt.setPower(0.5);
             } else if(gamepad1.right_bumper) {
                 robot.slideExt.setPower(-0.5);
@@ -60,6 +61,7 @@ public class testMode extends LinearOpMode {
             } else {
                 robot.slideRot.setPower(0);
             }
+            */
         }
     }
 }
