@@ -16,8 +16,9 @@ public class Robot {
     DcMotor frontRight;
     DcMotor slideExt;
     DcMotor slideRot;
-    IMU imu;
-    HardwareMap hardwareMap;
+    IMU imuControlHub;
+    IMU imuExpansionHub;
+    private final HardwareMap hardwareMap;
     Gamepad gamepad1;
     Gamepad gamepad2;
     float[] driveMotorPower;
@@ -28,25 +29,23 @@ public class Robot {
         gamepad2 = Gamepad2;
     }
     public void init() {
-        backLeft = hardwareMap.get(DcMotor.class, "backLeft");
+        backLeft = hardwareMap.get(DcMotor.class, "backLeft"); // broken encoder
         backRight = hardwareMap.get(DcMotor.class, "backRight");
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
-        // slideExt = hardwareMap.get(DcMotor.class, "slideExt");
-        // slideRot = hardwareMap.get(DcMotor.class, "slideRot");
-        // imu = hardwareMap.get(IMU.class, "NAME");
+        slideExt = hardwareMap.get(DcMotor.class, "slideExt");
+        slideRot = hardwareMap.get(DcMotor.class, "slideRot");
+        imuControlHub = hardwareMap.get(IMU.class, "imuExpansionHub");
+        imuExpansionHub = hardwareMap.get(IMU.class, "imuExpansionHub");
 
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        //backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        //backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        //frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        //frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        // imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(LogoFacingDirection.LEFT, UsbFacingDirection.UP)));
+        imuControlHub.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(LogoFacingDirection.RIGHT, UsbFacingDirection.UP)));
+        imuExpansionHub.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(LogoFacingDirection.LEFT, UsbFacingDirection.UP)));
     }
     public void processDriveInput() {
         // 2 3
