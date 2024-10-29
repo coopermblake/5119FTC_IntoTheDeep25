@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+// this class is currently broken - don't use it.
 public class ControllerManager {
     private Gamepad gamepad1Previous = new Gamepad();
     private Gamepad gamepad2Previous = new Gamepad();
