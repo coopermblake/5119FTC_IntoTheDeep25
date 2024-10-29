@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-public class Controller {
+public class ControllerManager {
     private Gamepad gamepad1Previous = new Gamepad();
     private Gamepad gamepad2Previous = new Gamepad();
     private Gamepad gamepad1;
@@ -39,7 +39,7 @@ public class Controller {
         DPADLEFT,
         DPADRIGHT
     }
-    public Controller(Gamepad gamepad1, Gamepad gamepad2) {
+    public ControllerManager(Gamepad gamepad1, Gamepad gamepad2) {
         this.gamepad1 = gamepad1;
         this.gamepad2 = gamepad2;
     }

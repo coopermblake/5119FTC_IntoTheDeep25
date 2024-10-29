@@ -8,7 +8,6 @@ public class testMode extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Robot robot = new Robot(hardwareMap, gamepad1, gamepad2);
-        robot.init();
         waitForStart();
         while(opModeIsActive()) {
             // note: encoder for backLeft is currently broken
@@ -52,20 +51,20 @@ public class testMode extends LinearOpMode {
             // Mappings for slide:
             // (left_bumper) OUT | IN (right_bumper)
             // dpad up/down = slide rotate up/down
-            if(gamepad1.left_bumper) {
-                robot.slideExt.setPower(0.5);
+            /*if(gamepad1.left_bumper) {
+                robot.slideExt.setPower(1);
             } else if(gamepad1.right_bumper) {
-                robot.slideExt.setPower(-0.5);
+                robot.slideExt.setPower(-1);
             } else {
                 robot.slideExt.setPower(0);
             }
             if(gamepad1.dpad_up) {
-                robot.slideRot.setPower(0.5);
+                robot.slideRot.setPower(1);
             } else if(gamepad1.dpad_down) {
-                robot.slideRot.setPower(-0.5);
+                robot.slideRot.setPower(-1);
             } else {
                 robot.slideRot.setPower(0);
-            }
+            }*/
         }
     }
 }

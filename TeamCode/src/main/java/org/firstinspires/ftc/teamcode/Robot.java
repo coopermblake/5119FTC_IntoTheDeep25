@@ -8,6 +8,9 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class Robot {
     DcMotor backLeft;
@@ -16,54 +19,63 @@ public class Robot {
     DcMotor frontRight;
     DcMotor slideExt;
     DcMotor slideRot;
-    IMU imuControlHub;
-    IMU imuExpansionHub;
+    IMU imu;
     private final HardwareMap hardwareMap;
     Gamepad gamepad1;
     Gamepad gamepad2;
-    float[] driveMotorPower;
-
+    ElapsedTime elapsedTime;
     public Robot(HardwareMap HardwareMap, Gamepad Gamepad1, Gamepad Gamepad2) {
         hardwareMap = HardwareMap;
         gamepad1 = Gamepad1;
         gamepad2 = Gamepad2;
-    }
-    public void init() {
+
+        elapsedTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+
         backLeft = hardwareMap.get(DcMotor.class, "backLeft"); // broken encoder
         backRight = hardwareMap.get(DcMotor.class, "backRight");
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         slideExt = hardwareMap.get(DcMotor.class, "slideExt");
         slideRot = hardwareMap.get(DcMotor.class, "slideRot");
-        imuControlHub = hardwareMap.get(IMU.class, "imuExpansionHub");
-        imuExpansionHub = hardwareMap.get(IMU.class, "imuExpansionHub");
+        imu = hardwareMap.get(IMU.class, "imu");
 
-        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        imuControlHub.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(LogoFacingDirection.RIGHT, UsbFacingDirection.UP)));
-        imuExpansionHub.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(LogoFacingDirection.LEFT, UsbFacingDirection.UP)));
-    }
-    public void processDriveInput() {
-        // 2 3
-        // 0 1
-        float inputY = -gamepad1.left_stick_y;
-        float inputX = gamepad1.left_stick_x;
-        float inputRot = gamepad1.right_stick_x;
-        float divisor = Math.max(Math.abs(inputY) + Math.abs(inputX) + Math.abs(inputRot), 1); // Scales movement
-        driveMotorPower[0] = (inputY - inputX + inputRot)/divisor;
-        driveMotorPower[1] = (inputY + inputX - inputRot)/divisor;
-        driveMotorPower[2] = (inputY + inputX + inputRot)/divisor;
-        driveMotorPower[3] = (inputY - inputX - inputRot)/divisor;
+        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        slideRot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        slideRot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        slideRot.setDirection(DcMotorSimple.Direction.REVERSE);
+        slideExt.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        slideExt.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(LogoFacingDirection.RIGHT, UsbFacingDirection.UP)));
     }
     public void rawDriveMovement() {
-        backLeft.setPower(driveMotorPower[0]);
-        backRight.setPower(driveMotorPower[1]);
-        frontLeft.setPower(driveMotorPower[2]);
-        frontRight.setPower(driveMotorPower[3]);
+        double inputY = -gamepad1.left_stick_y;
+        double inputX = gamepad1.left_stick_x;
+        double inputStrafe = gamepad1.right_stick_x;
+        //double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        //double rotX = (inputX * Math.cos(-botHeading) - inputY * Math.sin(-botHeading)) * 1.1;
+        //double rotY = inputX * Math.sin(-botHeading) + inputY * Math.cos(-botHeading);
+        double divisor = Math.max(Math.abs(inputY) + Math.abs(inputX) + Math.abs(inputStrafe), 1); // Scales movement
+        backLeft.setPower((inputY - inputX + inputStrafe)/divisor);
+        backRight.setPower((inputY + inputX - inputStrafe)/divisor);
+        frontLeft.setPower((inputY + inputX + inputStrafe)/divisor);
+        frontRight.setPower((inputY - inputX - inputStrafe)/divisor);
+    }
+    public void slideMovement() {
+        double inputSlideRot = -gamepad2.left_stick_y;
+        double inputSlideExt = -gamepad2.right_stick_y;
+        if (Math.abs(inputSlideRot) < 0.05) { // correct for stick drift
+            inputSlideRot = 0;
+        }
+        if (Math.abs(inputSlideExt) < 0.05) {
+            inputSlideExt = 0;
+        }
+        slideRot.setPower(inputSlideRot);
+        slideExt.setPower(inputSlideExt);
     }
     public void PIDAdjustedDriveMovement() {
 
