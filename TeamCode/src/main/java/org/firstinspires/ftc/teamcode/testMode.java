@@ -9,6 +9,33 @@ public class testMode extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         Robot robot = new Robot(hardwareMap, gamepad1, gamepad2);
         waitForStart();
+        int encoderStart;
+        encoderStart = robot.backLeft.getCurrentPosition();
+        robot.backLeft.setPower(0.5);
+        android.os.SystemClock.sleep(1000);
+        if (robot.backLeft.getCurrentPosition() > encoderStart + 100) {
+            telemetry.addLine("backLeft encoder test passed");
+        }
+        encoderStart = robot.backRight.getCurrentPosition();
+        robot.backRight.setPower(0.5);
+        android.os.SystemClock.sleep(1000);
+        if (robot.backRight.getCurrentPosition() > encoderStart + 100) {
+            telemetry.addLine("backRight encoder test passed");
+        }
+        encoderStart = robot.frontLeft.getCurrentPosition();
+        robot.frontLeft.setPower(0.5);
+        android.os.SystemClock.sleep(1000);
+        if (robot.frontLeft.getCurrentPosition() > encoderStart + 100) {
+            telemetry.addLine("frontLeft encoder test passed");
+        }
+        encoderStart = robot.frontRight.getCurrentPosition();
+        robot.frontRight.setPower(0.5);
+        android.os.SystemClock.sleep(1000);
+        if (robot.frontRight.getCurrentPosition() > encoderStart + 100) {
+            telemetry.addLine("frontRight encoder test passed");
+        }
+        telemetry.update();
+
         while(opModeIsActive()) {
             // note: encoder for backLeft is currently broken
             telemetry.addData("backLeft encoder value:", robot.backLeft.getCurrentPosition());
@@ -19,52 +46,26 @@ public class testMode extends LinearOpMode {
             telemetry.addData("slideRot encoder value:", robot.slideRot.getCurrentPosition());
             telemetry.update();
 
-            // Mappings for drivetrain:
-            //  FRONT
-            // (Y) (B)
-            // (X) (A)
-            //  BACK
-            // Y = BL
-            // B = BR
-            // X = FL
-            // A = FR
-            if(gamepad1.x) {
+            if (robot.gamepad1.a) {
                 robot.backLeft.setPower(0.5);
             } else {
                 robot.backLeft.setPower(0);
             }
-            if(gamepad1.a) {
+            if (robot.gamepad1.b) {
                 robot.backRight.setPower(0.5);
             } else {
                 robot.backRight.setPower(0);
             }
-            if(gamepad1.y) {
+            if (robot.gamepad1.x) {
                 robot.frontLeft.setPower(0.5);
             } else {
                 robot.frontLeft.setPower(0);
             }
-            if(gamepad1.b) {
+            if (robot.gamepad1.y) {
                 robot.frontRight.setPower(0.5);
             } else {
                 robot.frontRight.setPower(0);
             }
-            // Mappings for slide:
-            // (left_bumper) OUT | IN (right_bumper)
-            // dpad up/down = slide rotate up/down
-            /*if(gamepad1.left_bumper) {
-                robot.slideExt.setPower(1);
-            } else if(gamepad1.right_bumper) {
-                robot.slideExt.setPower(-1);
-            } else {
-                robot.slideExt.setPower(0);
-            }
-            if(gamepad1.dpad_up) {
-                robot.slideRot.setPower(1);
-            } else if(gamepad1.dpad_down) {
-                robot.slideRot.setPower(-1);
-            } else {
-                robot.slideRot.setPower(0);
-            }*/
         }
     }
 }
