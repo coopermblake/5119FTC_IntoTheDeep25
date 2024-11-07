@@ -22,7 +22,7 @@ public class Drivetrain {
     }
 
     public void rawDriveMovement(double topSpeed) {
-        double inputY = robot.gamepad1.left_stick_y;
+        double inputY = -robot.gamepad1.left_stick_y;
         double inputX = robot.gamepad1.left_stick_x;
         double inputStrafe = robot.gamepad1.right_stick_x;
         double divisor = Math.max(Math.abs(inputY) + Math.abs(inputX) + Math.abs(inputStrafe), 1); // Scales movement
