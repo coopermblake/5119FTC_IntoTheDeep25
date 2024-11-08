@@ -9,7 +9,6 @@ public class ViperSlide {
     DcMotor slideRot;
     Robot robot;
     boolean slideExtended = false;
-    boolean correcting = false;
 
     public ViperSlide(Robot robot) {
         this.robot = robot;
@@ -24,24 +23,17 @@ public class ViperSlide {
     }
 
     public void teleopSlideMovement() {
-        double inputSlideRot = -robot.gamepad2.left_stick_y;
-        double inputSlideExt = robot.gamepad2.right_stick_y;
-        if (slideRot.getCurrentPosition() > maxRot) {
-            correcting = true;
-            slideRot.setPower(-0.1);
-        } else if (slideRot.getCurrentPosition() < minRot) {
-            slideRot.setPower(0.1);
-            correcting = true;
-        }  else if (correcting) {
-            correcting = false;
-            slideRot.setPower(0);
-        } else {
-            if (Math.abs(inputSlideRot) < 0.05) {
-                inputSlideRot = 0;
-            }
-            slideRot.setPower(inputSlideRot);
-            slideExt.setPower(inputSlideExt);
+        double inputSlideRot = (-robot.gamepad1.left_trigger + robot.gamepad1.right_trigger) / 2;
+        double inputSlideExt = robot.gamepad2.left_stick_y;
+        if (robot.gamepad2.x) {
+            inputSlideRot = -0.5;
+        } else if (robot.gamepad2.b) {
+            inputSlideRot = 0.5;
+        } else if (Math.abs(inputSlideRot) < 0.05) {
+            inputSlideRot = 0;
         }
+        slideRot.setPower(inputSlideRot);
+        slideExt.setPower(inputSlideExt);
         if (robot.gamepad2.right_trigger > 0.05) {
             robot.gripper.setPosition(0.81);
 
