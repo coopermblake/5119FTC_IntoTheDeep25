@@ -9,15 +9,8 @@ public class driveMode extends LinearOpMode {
         Robot robot = new Robot(hardwareMap, gamepad1, gamepad2);
         waitForStart();
         while(opModeIsActive()) {
-            if (robot.viperSlide.slideExtended) { // restrict top speed when slide is out
-                robot.drivetrain.rawDriveMovement(0.5);
-            } else {
-                robot.drivetrain.rawDriveMovement(1);
-            }
+            robot.drivetrain.rawDriveMovement();
             robot.viperSlide.teleopSlideMovement();
-            // if (gamepad1.y) {
-            //     robot.imu.resetYaw();
-            // }
         }
     }
 }

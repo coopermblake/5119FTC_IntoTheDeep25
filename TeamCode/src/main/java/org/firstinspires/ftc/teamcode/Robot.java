@@ -11,11 +11,6 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
-
 public class Robot {
     DcMotor backLeft;
     DcMotor backRight;
@@ -30,11 +25,9 @@ public class Robot {
     Drivetrain drivetrain;
     ViperSlide viperSlide;
     ElapsedTime elapsedTime;
-    //WebcamName webcam;
     public Robot(HardwareMap HardwareMap, Gamepad Gamepad1, Gamepad Gamepad2) {
         gamepad1 = Gamepad1;
         gamepad2 = Gamepad2;
-        //webcam = HardwareMap.get(WebcamName.class, "Webcam 1");
         backLeft = HardwareMap.get(DcMotor.class, "backLeft"); // broken encoder
         backRight = HardwareMap.get(DcMotor.class, "backRight");
         frontLeft = HardwareMap.get(DcMotor.class, "frontLeft");
