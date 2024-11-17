@@ -11,6 +11,10 @@ public class driveMode extends LinearOpMode {
         while(opModeIsActive()) {
             robot.drivetrain.rawDriveMovement();
             robot.viperSlide.teleopSlideMovement();
+            //robot.viperSlide.handleMacros();
+            telemetry.addData("Viper slide rotation encoder: ", robot.viperSlide.slideRot.getCurrentPosition());
+            telemetry.addData("Viper slide extension encoder: ", robot.viperSlide.slideExt.getCurrentPosition());
+            telemetry.update();
         }
     }
 }

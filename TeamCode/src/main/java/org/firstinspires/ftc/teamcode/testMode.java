@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
@@ -58,6 +59,7 @@ public class testMode extends LinearOpMode {
 
         telemetry.update();
         android.os.SystemClock.sleep(1500);
+        robot.slideRot.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         while(opModeIsActive()) {
             // note: encoder for backLeft is currently broken
             telemetry.addData("backLeft encoder value:", robot.backLeft.getCurrentPosition());
@@ -90,9 +92,9 @@ public class testMode extends LinearOpMode {
             } else {
                 robot.frontRight.setPower(0);
             }
-            if(robot.gamepad1.dpad_up) {
+            if (robot.gamepad1.dpad_up) {
                 robot.slideRot.setPower(0.5);
-            } else if(robot.gamepad1.dpad_down) {
+            } else if (robot.gamepad1.dpad_down) {
                 robot.slideRot.setPower(-0.5);
             } else {
                 robot.slideRot.setPower(0);

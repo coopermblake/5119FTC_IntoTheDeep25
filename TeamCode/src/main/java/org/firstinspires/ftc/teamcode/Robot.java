@@ -16,15 +16,19 @@ public class Robot {
     DcMotor backRight;
     DcMotor frontLeft;
     DcMotor frontRight;
+
     DcMotor slideExt;
     DcMotor slideRot;
+
     Servo gripper;
     IMU imu;
+
     Gamepad gamepad1;
     Gamepad gamepad2;
+
     Drivetrain drivetrain;
     ViperSlide viperSlide;
-    ElapsedTime elapsedTime;
+
     public Robot(HardwareMap HardwareMap, Gamepad Gamepad1, Gamepad Gamepad2) {
         gamepad1 = Gamepad1;
         gamepad2 = Gamepad2;
@@ -36,12 +40,20 @@ public class Robot {
         slideRot = HardwareMap.get(DcMotor.class, "slideRot");
         gripper = HardwareMap.get(Servo.class, "gripper");
         imu = HardwareMap.get(IMU.class, "imu");
+
+        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         slideRot.setDirection(DcMotorSimple.Direction.REVERSE);
+        slideExt.setDirection(DcMotorSimple.Direction.REVERSE);
+
         imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(LogoFacingDirection.RIGHT, UsbFacingDirection.UP)));
+
         drivetrain = new Drivetrain(this);
         viperSlide = new ViperSlide(this);
-        elapsedTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     }
 }
