@@ -36,8 +36,8 @@ public class Robot {
         backRight = HardwareMap.get(DcMotor.class, "backRight");
         frontLeft = HardwareMap.get(DcMotor.class, "frontLeft");
         frontRight = HardwareMap.get(DcMotor.class, "frontRight");
-        slideExt = HardwareMap.get(DcMotor.class, "slideExt");
-        slideRot = HardwareMap.get(DcMotor.class, "slideRot");
+        slideExt = HardwareMap.get(DcMotor.class, "slideExt");// max-min = +8k
+        slideRot = HardwareMap.get(DcMotor.class, "slideRot"); // max-min = +5k
         gripper = HardwareMap.get(Servo.class, "gripper");
         imu = HardwareMap.get(IMU.class, "imu");
 

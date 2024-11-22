@@ -10,8 +10,12 @@ public class driveMode extends LinearOpMode {
         waitForStart();
         while(opModeIsActive()) {
             robot.drivetrain.rawDriveMovement();
+            telemetry.addData("Slide rotation stick input", -gamepad2.right_stick_y);
+            telemetry.addData("Slide extension stick input", -gamepad2.left_stick_y);
             robot.viperSlide.teleopSlideMovement();
-            //robot.viperSlide.handleMacros();
+            telemetry.addData("Slide rotation real input", robot.slideRot.getPower());
+            telemetry.addData("Slide extension real input", robot.slideRot.getPower());
+            robot.viperSlide.handleMacros();
             telemetry.addData("Viper slide rotation encoder: ", robot.viperSlide.slideRot.getCurrentPosition());
             telemetry.addData("Viper slide extension encoder: ", robot.viperSlide.slideExt.getCurrentPosition());
             telemetry.update();
