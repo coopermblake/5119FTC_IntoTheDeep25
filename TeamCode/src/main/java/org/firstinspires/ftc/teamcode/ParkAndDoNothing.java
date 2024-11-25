@@ -22,9 +22,6 @@ public class ParkAndDoNothing extends LinearOpMode {
         robot.backRight.setPower(0);
         robot.frontLeft.setPower(0);
         robot.frontRight.setPower(0);
-        while(opModeIsActive()) {
-            // do nothing
-        }
     }
     
 }

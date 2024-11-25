@@ -32,7 +32,7 @@ public class Robot {
     public Robot(HardwareMap HardwareMap, Gamepad Gamepad1, Gamepad Gamepad2) {
         gamepad1 = Gamepad1;
         gamepad2 = Gamepad2;
-        backLeft = HardwareMap.get(DcMotor.class, "backLeft"); // broken encoder
+        backLeft = HardwareMap.get(DcMotor.class, "backLeft");
         backRight = HardwareMap.get(DcMotor.class, "backRight");
         frontLeft = HardwareMap.get(DcMotor.class, "frontLeft");
         frontRight = HardwareMap.get(DcMotor.class, "frontRight");
