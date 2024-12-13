@@ -34,7 +34,7 @@ public class ViperSlide {
         } else {
             debounce = false;
         }
-        slideRot.setPower(-robot.gamepad2.right_stick_y);
+        slideRot.setPower(robot.gamepad2.right_stick_y);
         slideExt.setPower(-robot.gamepad2.left_stick_y);
     }
 
