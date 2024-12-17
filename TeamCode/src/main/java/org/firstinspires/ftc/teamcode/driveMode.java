@@ -12,12 +12,16 @@ import org.firstinspires.ftc.robotcore.internal.opengl.models.Geometry;
 public class driveMode extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         Robot robot = new Robot(hardwareMap, gamepad1, gamepad2);
+        long lastCycleStart;
         robot.gripper.setPosition(0.81);
         waitForStart();
+        robot.viperSlide.driverControl = true;
         while(opModeIsActive()) {
-            robot.drivetrain.rawDriveMovement();
-            robot.viperSlide.teleopSlideMovement();
-            robot.viperSlide.handleMacros();
+            robot.emergencyStop.checkAllMotors(robot);
+            lastCycleStart = System.currentTimeMillis();
+            robot.drivetrain.robotCentricDrive(gamepad1, gamepad2);
+            robot.viperSlide.teleopSlideMovement(gamepad1, gamepad2);
+            telemetry.addData("refresh rate (hz): ",1.0/(double) (System.currentTimeMillis() - lastCycleStart) );
             telemetry.update();
         }
     }
