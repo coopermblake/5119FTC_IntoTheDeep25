@@ -40,14 +40,12 @@ public class Robot {
         gripper = HardwareMap.get(Servo.class, "gripper");
         imu = HardwareMap.get(IMU.class, "imu");
 
-        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         slideRot.setDirection(DcMotorSimple.Direction.REVERSE);
         slideExt.setDirection(DcMotorSimple.Direction.REVERSE);
 
         imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(LogoFacingDirection.RIGHT, UsbFacingDirection.UP)));
 
-        drivetrain = new Drivetrain(this);
+        drivetrain = new Drivetrain(backLeft, backRight, frontLeft, frontRight);
         viperSlide = new ViperSlide(this);
     }
 }
