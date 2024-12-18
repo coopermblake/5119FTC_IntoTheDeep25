@@ -21,7 +21,7 @@ public class driveMode extends LinearOpMode {
             lastCycleStart = System.currentTimeMillis();
             robot.drivetrain.robotCentricDrive(gamepad1, gamepad2);
             robot.viperSlide.teleopSlideMovement(gamepad1, gamepad2);
-            telemetry.addData("refresh rate (hz): ",1.0/(double) (System.currentTimeMillis() - lastCycleStart) );
+            telemetry.addData("refresh rate (hz): ",1000/System.currentTimeMillis() - lastCycleStart);
             telemetry.update();
         }
     }
