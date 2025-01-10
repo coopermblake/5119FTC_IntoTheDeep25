@@ -42,6 +42,7 @@ public class Robot {
         imu = HardwareMap.get(IMU.class, "imu");
 
         slideExt.setDirection(DcMotorSimple.Direction.REVERSE);
+        slideRot.setDirection(DcMotorSimple.Direction.REVERSE);
 
         imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(LogoFacingDirection.RIGHT, UsbFacingDirection.UP)));
 

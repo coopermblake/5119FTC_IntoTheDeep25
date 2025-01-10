@@ -21,10 +21,10 @@ public class HangAndPark extends LinearOpMode {
         robot.slideExt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.slideExt.setPower(0.2);
 
-        robot.backLeft.setPower(0.15);
-        robot.backRight.setPower(0.15);
-        robot.frontLeft.setPower(0.15);
-        robot.frontRight.setPower(0.15);
+        robot.backLeft.setPower(0.3);
+        robot.backRight.setPower(0.3);
+        robot.frontLeft.setPower(0.3);
+        robot.frontRight.setPower(0.3);
         android.os.SystemClock.sleep(5000);
         robot.backLeft.setPower(0);
         robot.backRight.setPower(0);
