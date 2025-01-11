@@ -21,6 +21,14 @@ public class driveMode extends LinearOpMode {
             lastCycleStart = System.currentTimeMillis();
             robot.drivetrain.robotCentricDrive(gamepad1, gamepad2);
             robot.viperSlide.teleopSlideMovement(gamepad1, gamepad2);
+            telemetry.addData("ext", robot.viperSlide.slideExt.getCurrentPosition());
+            telemetry.addData("rot", robot.viperSlide.slideRot.getCurrentPosition());
+            telemetry.addData("extMin", robot.viperSlide.extMin);
+            telemetry.addData("extMaxLow", robot.viperSlide.extMaxLow);
+            telemetry.addData("extMaxHigh", robot.viperSlide.extMaxHigh);
+            telemetry.addData("rotMin", robot.viperSlide.rotMin);
+            telemetry.addData("rotMax", robot.viperSlide.rotMax);
+
             telemetry.update();
         }
     }
