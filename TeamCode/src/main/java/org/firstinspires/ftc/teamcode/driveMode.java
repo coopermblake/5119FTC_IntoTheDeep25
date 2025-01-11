@@ -13,10 +13,10 @@ public class driveMode extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         Robot robot = new Robot(hardwareMap, gamepad1, gamepad2);
         long lastCycleStart = System.currentTimeMillis();
-        robot.gripper.setPosition(0.81);
         waitForStart();
         robot.viperSlide.driverControl = true;
         while(opModeIsActive()) {
+            robot.gripper.setPosition(0.81);
             telemetry.addData("refresh rate (hz): ",1000/(System.currentTimeMillis() - lastCycleStart + 1));
             lastCycleStart = System.currentTimeMillis();
             robot.drivetrain.robotCentricDrive(gamepad1, gamepad2);

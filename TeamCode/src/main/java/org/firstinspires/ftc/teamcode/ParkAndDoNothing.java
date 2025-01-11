@@ -14,7 +14,15 @@ public class ParkAndDoNothing extends LinearOpMode {
         robot.backRight.setPower(0.5);
         robot.frontLeft.setPower(0.5);
         robot.frontRight.setPower(0.5);
-        android.os.SystemClock.sleep(2500);
+        android.os.SystemClock.sleep(100);
+
+        robot.backLeft.setPower(-0.65);
+        robot.backRight.setPower(0.65);
+        robot.frontLeft.setPower(0.65);
+        robot.frontRight.setPower(-0.65);
+
+        android.os.SystemClock.sleep(1450);
+
         robot.backLeft.setPower(0);
         robot.backRight.setPower(0);
         robot.frontLeft.setPower(0);
