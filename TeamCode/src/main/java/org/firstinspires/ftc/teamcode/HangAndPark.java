@@ -32,7 +32,7 @@ public class HangAndPark extends LinearOpMode {
         robot.frontRight.setPower(0);
         android.os.SystemClock.sleep(1000);
         robot.slideExt.setTargetPosition(minPosition + 200);
-        robot.slideRot.setTargetPosition(lowPosition + 2700);
+        robot.slideRot.setTargetPosition(lowPosition - 2700);
         android.os.SystemClock.sleep(2000);
         robot.gripper.setPosition(0.47);
         android.os.SystemClock.sleep(1000);
