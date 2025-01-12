@@ -28,7 +28,8 @@ public class driveMode extends LinearOpMode {
             telemetry.addData("extMaxHigh", robot.viperSlide.extMaxHigh);
             telemetry.addData("rotMin", robot.viperSlide.rotMin);
             telemetry.addData("rotMax", robot.viperSlide.rotMax);
-
+            telemetry.addData( "gripper", robot.gripper.getPosition());
+            telemetry.addData("rightTrigger", gamepad2.right_trigger);
             telemetry.update();
         }
     }
