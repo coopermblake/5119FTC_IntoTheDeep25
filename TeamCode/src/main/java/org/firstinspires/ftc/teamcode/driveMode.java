@@ -16,7 +16,6 @@ public class driveMode extends LinearOpMode {
         waitForStart();
         robot.viperSlide.driverControl = true;
         while(opModeIsActive()) {
-            robot.gripper.setPosition(0.81);
             telemetry.addData("refresh rate (hz): ",1000/(System.currentTimeMillis() - lastCycleStart + 1));
             lastCycleStart = System.currentTimeMillis();
             robot.drivetrain.robotCentricDrive(gamepad1, gamepad2);

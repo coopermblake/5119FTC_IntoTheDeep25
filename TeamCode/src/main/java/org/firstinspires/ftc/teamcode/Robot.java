@@ -27,7 +27,6 @@ public class Robot {
 
     Drivetrain drivetrain;
     ViperSlide viperSlide;
-    EmergencyStop emergencyStop;
 
     public Robot(HardwareMap HardwareMap, Gamepad Gamepad1, Gamepad Gamepad2) {
         gamepad1 = Gamepad1;
@@ -48,6 +47,5 @@ public class Robot {
 
         drivetrain = new Drivetrain(backLeft, backRight, frontLeft, frontRight);
         viperSlide = new ViperSlide(this);
-        emergencyStop = new EmergencyStop();
     }
 }
