@@ -10,6 +10,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+
 public class Robot {
     DcMotor backLeft;
     DcMotor backRight;
@@ -47,5 +50,10 @@ public class Robot {
 
         drivetrain = new Drivetrain(backLeft, backRight, frontLeft, frontRight);
         viperSlide = new ViperSlide(this);
+    }
+
+    public double getYawDegrees(){
+        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
+        return orientation.getYaw(AngleUnit.DEGREES);
     }
 }
