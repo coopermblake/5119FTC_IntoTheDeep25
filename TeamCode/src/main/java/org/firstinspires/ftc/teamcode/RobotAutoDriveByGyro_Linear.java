@@ -31,7 +31,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -88,20 +87,16 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
  *  Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Robot: Auto Drive By Gyro", group="Robot")
-@Disabled
+@Autonomous(name="Robot: Auto Drive By Gyro", group="Competition Opmodes")
 public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
     Robot robot = new Robot(hardwareMap, gamepad1, gamepad2);
-
-    private double          headingError  = 0;
+    private double headingError  = 0;
 
     // These variable are declared here (as class members) so they can be updated in various methods,
     // but still be displayed by sendTelemetry()
     private double  targetHeading = 0;
     private double  driveSpeed    = 0;
     private double  turnSpeed     = 0;
-
-    //will need to remove leftSpeed, rightSpeed, leftTarget, rightTarget and add these on
     private double strafeSpeed   = 0;
     private double frontLeftSpeed = 0;
     private double frontRightSpeed = 0;
@@ -139,16 +134,16 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
 
 
     @Override
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException {
         /* The next two lines define Hub orientation.
          * The Default Orientation (shown) is when a hub is mounted horizontally with the printed logo pointing UP and the USB port pointing FORWARD.
          */
-        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
-        RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.RIGHT;
-        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
+//        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
+//        RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.RIGHT;
+//        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
 
         // Now initialize the imu with this mounting orientation
-        robot.imu.initialize(new IMU.Parameters(orientationOnRobot));
+//        robot.imu.initialize(new IMU.Parameters(orientationOnRobot));
 
         // Ensure the robot is stationary. Reset the encoders and set the motors to BRAKE mode
         robot.frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -195,8 +190,8 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
         // Step 1: Drive forward 18 inches
         driveStraight(DRIVE_SPEED, 18.0, 0.0);
 
-        // Step 2: Turn 180 degrees to the left (CCW)
-        turnToHeading(TURN_SPEED, 180.0);
+        // Step 2: Turn 90 degrees to the left (CCW)
+        turnToHeading(TURN_SPEED, 90.0);
 
         // Step 3: Drive forward 70 inches
         driveStraight(DRIVE_SPEED, 70.0, 180.0);
@@ -205,6 +200,9 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
         telemetry.addData("Path", "Complete");
         telemetry.update();
         sleep(1000);  // Pause to display last telemetry message
+
+        waitForStart();
+        while(opModeIsActive()) {}
     }
 
     /*
