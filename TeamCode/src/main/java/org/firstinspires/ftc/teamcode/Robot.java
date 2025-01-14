@@ -54,12 +54,7 @@ public class Robot {
         autoDrive = new AutoDrive(backLeft, backRight, frontLeft, frontRight, imu);
     }
 
-    public double getYawDegrees(){
-        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
-        return orientation.getYaw(AngleUnit.DEGREES);
-    }
-
-    public double getYawDegrees(){
+    public double getYawDegrees() {
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
         return orientation.getYaw(AngleUnit.DEGREES);
     }
