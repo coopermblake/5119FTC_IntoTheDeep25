@@ -30,6 +30,7 @@ public class Robot {
 
     Drivetrain drivetrain;
     ViperSlide viperSlide;
+    AutoDrive autoDrive;
 
     public Robot(HardwareMap HardwareMap, Gamepad Gamepad1, Gamepad Gamepad2) {
         gamepad1 = Gamepad1;
@@ -50,6 +51,7 @@ public class Robot {
 
         drivetrain = new Drivetrain(backLeft, backRight, frontLeft, frontRight);
         viperSlide = new ViperSlide(this);
+        autoDrive = new AutoDrive(backLeft, backRight, frontLeft, frontRight, imu);
     }
 
     public double getYawDegrees(){
