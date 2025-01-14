@@ -15,6 +15,7 @@ public class CustomPID {
         this.kI = kI;
         this.kD = kD;
         this.iT = 0;
+        this.pErr = 0;
     }
 
     public double cycleController(double setPoint, double realPoint) {
