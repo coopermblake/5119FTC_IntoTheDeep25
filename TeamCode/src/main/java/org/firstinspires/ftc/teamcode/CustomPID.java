@@ -18,6 +18,7 @@ public class CustomPID {
         this.pErr = 0;
     }
 
+    // This function cycles the PID controller.
     public double cycleController(double setPoint, double realPoint) {
         double time = timer.milliseconds();
         double err = setPoint - realPoint;
