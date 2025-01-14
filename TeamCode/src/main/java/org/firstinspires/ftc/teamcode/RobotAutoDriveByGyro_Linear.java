@@ -31,7 +31,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -88,20 +87,16 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
  *  Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Robot: Auto Drive By Gyro", group="Robot")
-@Disabled
+@Autonomous(name="EncoderBasedAuto", group="Competition Opmodes")
 public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
-    Robot robot = new Robot(hardwareMap, gamepad1, gamepad2);
-
-    private double          headingError  = 0;
+    Robot robot;
+    private double headingError  = 0;
 
     // These variable are declared here (as class members) so they can be updated in various methods,
     // but still be displayed by sendTelemetry()
     private double  targetHeading = 0;
     private double  driveSpeed    = 0;
     private double  turnSpeed     = 0;
-
-    //will need to remove leftSpeed, rightSpeed, leftTarget, rightTarget and add these on
     private double strafeSpeed   = 0;
     private double frontLeftSpeed = 0;
     private double frontRightSpeed = 0;
@@ -120,14 +115,14 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
     // For gearing UP, use a gear ratio less than 1.0. Note this will affect the direction of wheel rotation.
     static final double     COUNTS_PER_MOTOR_REV    = 384.5 ;   // need to make sure this is correct for 435 rpm yellow jacket motor
     static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing.
-    static final double     WHEEL_DIAMETER_INCHES   = 4.09 ;     // For figuring circumference
+    static final double     WHEEL_DIAMETER_INCHES   = 4.09449 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);
 
     // These constants define the desired driving/control characteristics
     // They can/should be tweaked to suit the specific robot drive train.
     static final double     DRIVE_SPEED             = 0.4;     // Max driving speed for better distance accuracy.
-    static final double     TURN_SPEED              = 0.2;     // Max turn speed to limit turn rate.
+    static final double     TURN_SPEED              = 0.6;     // Max turn speed to limit turn rate.
     static final double     HEADING_THRESHOLD       = 1.0 ;    // How close must the heading get to the target before moving to next step.
     // Requiring more accuracy (a smaller number) will often make the turn take longer to get into the final position.
     // Define the Proportional control coefficient (or GAIN) for "heading control".
@@ -135,38 +130,39 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
     // Increase these numbers if the heading does not correct strongly enough (eg: a heavy robot or using tracks)
     // Decrease these numbers if the heading does not settle on the correct value (eg: very agile robot with omni wheels)
     static final double     P_TURN_GAIN            = 0.02;     // Larger is more responsive, but also less stable.
-    static final double     P_DRIVE_GAIN           = 0.03;     // Larger is more responsive, but also less stable.
+    static final double     P_DRIVE_GAIN           = 0.005;     // Larger is more responsive, but also less stable.
+    static final double P_STRAFE_GAIN = 0.005;
 
 
     @Override
-    public void runOpMode() {
-        /* The next two lines define Hub orientation.
-         * The Default Orientation (shown) is when a hub is mounted horizontally with the printed logo pointing UP and the USB port pointing FORWARD.
-         */
-        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
-        RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.RIGHT;
-        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
+    public void runOpMode() throws InterruptedException {
+        telemetry.addLine("startInit");
+        telemetry.update();
+        sleep(1000);
+        robot = new Robot(hardwareMap, gamepad1, gamepad2);
 
-        // Now initialize the imu with this mounting orientation
-        robot.imu.initialize(new IMU.Parameters(orientationOnRobot));
-
-        // Ensure the robot is stationary. Reset the encoders and set the motors to BRAKE mode
         robot.frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
+//
         robot.frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         robot.frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         robot.backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         robot.backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Wait for the game to start (Display Gyro value while waiting)
+        telemetry.addLine("inInit");
+        telemetry.update();
+        sleep(5000);
+
         while (opModeInInit()) {
             telemetry.addData(">", "Robot Heading = %4.0f", getHeading());
             telemetry.update();
         }
 
+        telemetry.addLine("endInit");
+        telemetry.update();
         // Set the encoders for closed-loop speed control, and reset the heading
         robot.frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -178,7 +174,7 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
         // Notes: Reverse movement is obtained by setting a negative distance (not speed)
         //        holdHeading() is used after turns to let the heading stabilize
 
-//        driveStraight(DRIVE_SPEED, 24.0, 0.0);    // Drive Forward 24"
+//       driveStraight(DRIVE_SPEED, 24.0, 0.0);    // Drive Forward 24"
 //        turnToHeading(TURN_SPEED, -45.0);               // Turn CW to -45 Degrees
 //        holdHeading(TURN_SPEED, -45.0, 0.5);   // Hold -45 Deg heading for 1/2 second
 //
@@ -192,19 +188,18 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
 //
 //        driveStraight(DRIVE_SPEED, -48.0, 0.0);    // Drive in Reverse 48" (should return to starting position)
 
-        // Step 1: Drive forward 18 inches
-        driveStraight(DRIVE_SPEED, 18.0, 0.0);
-
-        // Step 2: Turn 180 degrees to the left (CCW)
-        turnToHeading(TURN_SPEED, 180.0);
-
-        // Step 3: Drive forward 70 inches
-        driveStraight(DRIVE_SPEED, 70.0, 180.0);
+        telemetry.addLine("ready to drive");
+        telemetry.update();
+        sleep(1000);
 
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
         sleep(1000);  // Pause to display last telemetry message
+
+        while(opModeIsActive()) {
+
+        }
     }
 
     /*
@@ -230,17 +225,21 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
      */
     public void driveStraight(double maxDriveSpeed,
                               double distance,
-                              double heading) {
+                              double heading,
+                              double strafeDistance) {
 
         // Ensure that the OpMode is still active
         if (opModeIsActive()) {
 
-            // Determine new target position for all four motors
-            int moveCounts = (int)(distance * COUNTS_PER_INCH);
-            frontLeftTarget = robot.frontLeft.getCurrentPosition() + moveCounts;
-            frontRightTarget = robot.frontRight.getCurrentPosition() + moveCounts;
-            backLeftTarget = robot.backLeft.getCurrentPosition() + moveCounts;
-            backRightTarget = robot.backRight.getCurrentPosition() + moveCounts;
+            // Determine new target position for all four motors, including strafing
+            int moveCounts = (int) (distance * COUNTS_PER_INCH);
+            int strafeCounts = (int) (strafeDistance * COUNTS_PER_INCH);
+
+            // Combine forward/reverse and strafing movements for each motor
+            frontLeftTarget = robot.frontLeft.getCurrentPosition() + moveCounts + strafeCounts;
+            frontRightTarget = robot.frontRight.getCurrentPosition() + moveCounts - strafeCounts;
+            backLeftTarget = robot.backLeft.getCurrentPosition() + moveCounts - strafeCounts;
+            backRightTarget = robot.backRight.getCurrentPosition() + moveCounts + strafeCounts;
 
             // Set Target FIRST, then turn on RUN_TO_POSITION
             robot.frontLeft.setTargetPosition(frontLeftTarget);
@@ -254,9 +253,8 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
             robot.backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             // Set the required driving speed  (must be positive for RUN_TO_POSITION)
-            // Start driving straight, and then enter the control loop
             maxDriveSpeed = Math.abs(maxDriveSpeed);
-            moveRobot(maxDriveSpeed, 0);
+            moveRobot(maxDriveSpeed, 0, 0); // Include strafeSpeed as a parameter
 
             // Keep looping while we are still active, and all motors are running
             while (opModeIsActive() &&
@@ -264,25 +262,25 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
                             robot.backLeft.isBusy() && robot.backRight.isBusy())) {
 
                 // Determine required steering to keep on heading
-                turnSpeed = getSteeringCorrection(heading, P_DRIVE_GAIN);
+                turnSpeed = getSteeringCorrection(heading, P_TURN_GAIN);
+                strafeSpeed = getSteeringCorrection(heading, P_STRAFE_GAIN); // Optional strafing correction
 
                 // if driving in reverse, the motor correction also needs to be reversed
                 if (distance < 0) turnSpeed *= -1.0;
 
-                // Apply the turning correction to the current driving speed.
-                moveRobot(maxDriveSpeed, turnSpeed);
+                // Apply the turning and strafing corrections to the current driving speed
+                moveRobot(maxDriveSpeed, turnSpeed, strafeSpeed);
 
-                // Display drive status for the driver.
+                // Display drive status for the driver
                 sendTelemetry(true);
             }
 
             // Stop all motion & Turn off RUN_TO_POSITION
-            moveRobot(0, 0);
+            moveRobot(0, 0, 0);
             robot.frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             robot.frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             robot.backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             robot.backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
         }
     }
 
@@ -315,14 +313,14 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
             turnSpeed = Range.clip(turnSpeed, -maxTurnSpeed, maxTurnSpeed);
 
             // Pivot in place by applying the turning correction to all motors
-            moveRobot(0, turnSpeed); // 0 for no forward/backward motion
+            moveRobot(0, turnSpeed,0);
 
             // Display drive status for the driver
             sendTelemetry(false);
         }
 
         // Stop all motion
-        moveRobot(0, 0);
+        moveRobot(0, 0,0);
     }
 
     /**
@@ -352,14 +350,14 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
             turnSpeed = Range.clip(turnSpeed, -maxTurnSpeed, maxTurnSpeed);
 
             // Apply turning correction to all four motors
-            moveRobot(0, turnSpeed); // No forward/backward or strafing, only turning
+            moveRobot(0, turnSpeed,0); // only turning
 
             // Display drive status for the driver
             sendTelemetry(false);
         }
 
         // Stop all motion
-        moveRobot(0, 0);
+        moveRobot(0, 0,0);
     }
 
     // **********  LOW Level driving functions.  ********************
@@ -403,22 +401,23 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
     }
 
     /**
-     * Take separate drive (fwd/rev) and turn (right/left) requests,
-     * combines them, and applies the appropriate speed commands to the four wheel motors.
-     * @param drive forward/reverse motor speed
-     * @param turn  clockwise/counterclockwise turning motor speed.
+     * Move the robot with separate forward/reverse, turning, and strafing speeds.
+     *
+     * @param drive Forward/reverse motor speed.
+     * @param turn Clockwise/counterclockwise turning motor speed.
+     * @param strafe Left/right strafing motor speed.
      */
-    public void moveRobot(double drive, double turn) {
-        driveSpeed = drive;     // Save this value as a class member for telemetry
-        turnSpeed  = turn;      // Save this value as a class member for telemetry
+    public void moveRobot(double drive, double turn, double strafe) {
+        driveSpeed = drive;
+        turnSpeed = turn;
+        strafeSpeed = strafe;
 
         // Calculate motor powers for mecanum drive
-        frontLeftSpeed = drive + turn;
-        frontRightSpeed = drive - turn;
-        backLeftSpeed = drive + turn;
-        backRightSpeed = drive - turn;
+        frontLeftSpeed = drive + turn + strafe;
+        frontRightSpeed = drive - turn - strafe;
+        backLeftSpeed = drive + turn - strafe;
+        backRightSpeed = drive - turn + strafe;
 
-        // Scale motor powers if any exceed +/- 1.0
         double maxPower = Math.max(Math.abs(frontLeftSpeed),
                 Math.max(Math.abs(frontRightSpeed),
                         Math.max(Math.abs(backLeftSpeed), Math.abs(backRightSpeed))));
@@ -479,4 +478,170 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
             return 0.0; // Default to 0 degrees if IMU data is unavailable
         }
     }
+
+    //Strafe method
+    public void strafe(double maxStrafeSpeed, double distance, double heading) {
+        if (opModeIsActive()) {
+
+            int moveCounts = (int)(distance * COUNTS_PER_INCH);
+            frontLeftTarget = robot.frontLeft.getCurrentPosition() - moveCounts;
+            frontRightTarget = robot.frontRight.getCurrentPosition() + moveCounts;
+            backLeftTarget = robot.backLeft.getCurrentPosition() + moveCounts;
+            backRightTarget = robot.backRight.getCurrentPosition() - moveCounts;
+
+            robot.frontLeft.setTargetPosition(frontLeftTarget);
+            robot.frontRight.setTargetPosition(frontRightTarget);
+            robot.backLeft.setTargetPosition(backLeftTarget);
+            robot.backRight.setTargetPosition(backRightTarget);
+
+            robot.frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            maxStrafeSpeed = Math.abs(maxStrafeSpeed);
+            moveRobot(0, 0, maxStrafeSpeed);
+
+            while (opModeIsActive() &&
+                    (robot.frontLeft.isBusy() && robot.frontRight.isBusy() &&
+                            robot.backLeft.isBusy() && robot.backRight.isBusy())) {
+
+                double correction = getSteeringCorrection(heading, P_DRIVE_GAIN);
+                moveRobot(0, correction, maxStrafeSpeed);
+
+                sendTelemetry(true);
+            }
+
+            moveRobot(0, 0, 0);
+            robot.frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+    }
+
+    //Diagonal driving method
+    public void driveDiagonal(double speed, double distance, double angle) {
+        if (opModeIsActive()) {
+            double angleRad = Math.toRadians(angle);
+
+            double xPower = Math.cos(angleRad); // Sideways component
+            double yPower = Math.sin(angleRad); // Forward component
+
+            double normalizationFactor = Math.max(Math.abs(xPower), Math.abs(yPower));
+            xPower /= normalizationFactor;
+            yPower /= normalizationFactor;
+
+            double frontLeftPower = (yPower + xPower) * speed;
+            double frontRightPower = (yPower - xPower) * speed;
+            double backLeftPower = (yPower - xPower) * speed;
+            double backRightPower = (yPower + xPower) * speed;
+
+            int moveCounts = (int) (distance * COUNTS_PER_INCH);
+            frontLeftTarget = robot.frontLeft.getCurrentPosition() + (int) (frontLeftPower * moveCounts);
+            frontRightTarget = robot.frontRight.getCurrentPosition() + (int) (frontRightPower * moveCounts);
+            backLeftTarget = robot.backLeft.getCurrentPosition() + (int) (backLeftPower * moveCounts);
+            backRightTarget = robot.backRight.getCurrentPosition() + (int) (backRightPower * moveCounts);
+
+            robot.frontLeft.setTargetPosition(frontLeftTarget);
+            robot.frontRight.setTargetPosition(frontRightTarget);
+            robot.backLeft.setTargetPosition(backLeftTarget);
+            robot.backRight.setTargetPosition(backRightTarget);
+
+            robot.frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            robot.frontLeft.setPower(Math.abs(frontLeftPower));
+            robot.frontRight.setPower(Math.abs(frontRightPower));
+            robot.backLeft.setPower(Math.abs(backLeftPower));
+            robot.backRight.setPower(Math.abs(backRightPower));
+
+            while (opModeIsActive() &&
+                    (robot.frontLeft.isBusy() && robot.frontRight.isBusy() &&
+                            robot.backLeft.isBusy() && robot.backRight.isBusy())) {
+                telemetry.addData("Diagonal Move", "Angle: %.2f, Distance: %.2f", angle, distance);
+                telemetry.update();
+            }
+
+            robot.frontLeft.setPower(0);
+            robot.frontRight.setPower(0);
+            robot.backLeft.setPower(0);
+            robot.backRight.setPower(0);
+
+            robot.frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+    }
+
+    /*
+        public driveAndRotate(IMU imu, double speed, double heading, double rotationSpeed, double rotationAngle, int timeoutMS) {
+	boolean pathComplete = false;
+	boolean rotationComplete = false;
+        int distanceTravelled = 0;
+        int initialFLticks = robot.frontLeft.getCurrentPosition();
+        int initialBLticks = robot.backLeft.getCurrentPosition();
+        int initialFRticks = robot.frontRight.getCurrentPosition();
+        int initialBRticks = robot.backRight.getCurrentPosition();
+        double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        double xDist = targetx - currentx) + cos(targetangle - botHeading);
+        double yDist = targety - currenty) + sin(targetangle - botHeading);
+        double targetXTicks = xDist * COUNTS_PER_INCH * 1.1 + initialFLticks;
+        double targetYTicks = yDist * COUNTS_PER_INCH + initialFLTicks;
+
+        while (opModeIsActive() && !pathComplete && !rotationComplete) {
+
+            double rx = rotationSpeed;
+
+            // Have we rotated enough?
+	    botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+            if (Math.abs(rotationAngle - botHeading) < 0.1) {
+                // Mark rotation complete and set rotation speed to 0
+                rotationComplete = true;
+                rx = 0;
+            }
+
+
+            // Have we translated enough?
+            currentFLticks = robot.frontLeft.getCurrentPosition();
+            currentBLticks = robot.backLeft.getCurrentPosition();
+            currentFRticks = robot.frontRight.getCurrentPosition();
+            currentBRticks = robot.backRight.getCurrentPosition();
+
+            if ((Math.abs(xDist) >  Math.abs(yDist) && Math.abs(currentFLticks - targetXTicks) < 20) {
+                 translationComplete = true;
+                 speed = 0;
+	    }
+            if (Math.abs(yDist) > Math.abs(xDist) && Math.abs(currentFLticks - targetTicks) < 20) {
+                 translationComplete = true;
+                 speed = 0;
+            }
+
+            double x = speed * Math.cos(heading);
+	    double y = speed * Math.sin(heading);
+
+            // Rotate the movement direction counter to the bot's rotation
+            double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
+            double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
+            rotX = rotX * 1.1;  // Counteract imperfect strafing
+
+            // Denominator is the largest motor power (absolute value) or 1
+            // This ensures all the powers maintain the same ratio,
+            // but only if at least one is out of the range [-1, 1]
+            double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
+            double frontLeftPower = (rotY + rotX + rx) / denominator;
+            double backLeftPower = (rotY - rotX + rx) / denominator;
+            double frontRightPower = (rotY - rotX - rx) / denominator;
+            double backRightPower = (rotY + rotX - rx) / denominator;
+
+            frontLeftMotor.setPower(frontLeftPower);
+            backLeftMotor.setPower(backLeftPower);
+            frontRightMotor.setPower(frontRightPower);
+            backRightMotor.setPower(backRightPower);
+        }
+
+     */
 }
