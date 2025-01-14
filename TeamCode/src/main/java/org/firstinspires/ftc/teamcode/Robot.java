@@ -58,4 +58,9 @@ public class Robot {
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
         return orientation.getYaw(AngleUnit.DEGREES);
     }
+
+    public double getYawRadians(){
+        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
+        return orientation.getYaw(AngleUnit.RADIANS);
+    }
 }
