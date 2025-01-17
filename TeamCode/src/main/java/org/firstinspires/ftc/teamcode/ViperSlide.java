@@ -10,6 +10,8 @@ public class ViperSlide {
     boolean debounce = false;
     boolean gripperPosition = false;
     boolean driverControl = false;
+
+    private boolean macroing;
     int rotMin;
     int rotMax;
     int extMin;
@@ -70,10 +72,14 @@ public class ViperSlide {
         }
     }
 
+    //during macro movements: if controller button pressed, than stop macro movements, turn macroing false
+    //then return to teleop normal movements
     public void teleopSlideMovement(Gamepad gamepad1, Gamepad gamepad2) {
         double extPower;
         double rotPower;
-        if (driverControl) {
+        handleMacros(gamepad2);
+
+        if (driverControl&&!macroing) {
             handleGripper();
 
             if(gamepad1.y){
@@ -84,23 +90,32 @@ public class ViperSlide {
             rotPower=-gamepad2.right_stick_y;
             extPower = -gamepad2.left_stick_y;
             if (Math.abs(-gamepad2.right_stick_y) < 0.05) {
-                //slideRot.setPower(0);
                 rotPower=0;
-            } else {
-                //slideRot.setPower(-gamepad2.right_stick_y);
             }
             if (Math.abs(-gamepad2.left_stick_y) < 0.05) {
-                //slideExt.setPower(0);
                 extPower = 0;
-            } else {
-                //slideExt.setPower(-gamepad2.left_stick_y);
             }
             moveSlide(rotPower, extPower);
-            handleMacros(gamepad2);
         }
     }
 
     private void handleMacros(Gamepad gamepad2) {
+        if(gamepad2.dpad_up){
+            macroing = true;
+            slideRot.setTargetPosition(rotMin-2900);
+            slideRot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            slideRot.setPower(0.2);
+        }
+        else if(gamepad2.dpad_down){
+            macroing = true;
+            slideRot.setTargetPosition(rotMin);
+            slideRot.setPower(0.1);
+        }
 
+        if(gamepad2.b){
+            macroing = false;
+            slideExt.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            slideRot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
     }
 }
